@@ -3,5 +3,7 @@
 
 ## Setup
 
-edit `/etc/rc.local` as root  
-and `/home/pi/lcd/autostart.sh &` above the `exit 0`.
+1. clone this repository to pi's root directory (`/home/pi`)
+
+2. edit `/etc/rc.local` as root  
+   and `/home/pi/raspberry_pi/autostart.sh &` above the `exit 0`.

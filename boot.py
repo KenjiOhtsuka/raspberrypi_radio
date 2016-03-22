@@ -1,12 +1,30 @@
 #!/usr/bin/python
 
+import commands
 import os
 import time
 import Adafruit_CharLCD as LCD
 
-#class MyPi(object):
-#    # menu
+class MyPi(object):
+    def __init__(self):
+        self.volume = int(commands.getoutput('amixer sget PCM | awk -F"[][%]" \'/dB/ { print $2 }\''))
 
+    def up_volume(self):
+        if self.volume < 100:
+            self.volume += 1
+            self.set_device_volume(self.volume)
+
+    def down_volume(self):
+        if self.volume > 0:
+            self.volume -= 1
+            self.set_device_volume(self.volume)
+
+    def set_device_volume(self, value):
+        os.system('amixer -q sset PCM ' + str(value) + '%')
+
+
+
+myPi = MyPi()
 
 lcd = LCD.Adafruit_CharLCDPlate()
 
@@ -21,19 +39,38 @@ sameCount = 0
 preButton = -1
 while True:
     time.sleep(0.01)
-    for button in buttons:
-        if lcd.is_pressed(button[0]):
+    if lcd.is_pressed(LCD.SELECT):
+        if preButton == LCD.SELECT:
+            sameCount += 1
             lcd.clear()
-            lcd.message(button[1] + str(sameCount))
-            if preButton == button[0]:
-                if sameCount > 50:
-                    if preButton == LCD.SELECT:
-                        os.system('sudo shutdown -h now')
-                        lcd.clear()
-                        lcd.message('shutdown')
-                else:
-                    sameCount += 1
-            else:
-                sameCount = 0
-                preButton = button[0]
+        else:
+            sameCount = 0
+            lcd.clear()
+        lcd.message('SELECT ' + str(sameCount))
+        if sameCount > 40:
+            lcd.clear()
+            lcd.message('shutdown')
+            os.system('sudo shutdown -h now')
+            break
+        preButton = LCD.SELECT
+    elif lcd.is_pressed(LCD.UP):
+        if preButton in (LCD.UP, LCD.DOWN):
+            myPi.up_volume()
+        lcd.clear()
+        lcd.message(str(myPi.volume))
+        preButton = LCD.UP
+    elif lcd.is_pressed(LCD.DOWN):
+        if preButton in (LCD.UP, LCD.DOWN):
+            myPi.down_volume()
+        lcd.clear()
+        lcd.message(str(myPi.volume))
+        preButton = LCD.DOWN
+    elif lcd.is_pressed(LCD.LEFT):
+        lcd.clear()
+        lcd.message('LEFT')
+        preButton = LCD.LEFT
+    elif lcd.is_pressed(LCD.RIGHT):
+        lcd.clear()
+        lcd.message('RIGHT')
+        preButton = LCD.RIGHT
 

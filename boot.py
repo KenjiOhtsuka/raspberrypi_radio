@@ -84,20 +84,20 @@ if __name__ == "__main__":
                 myPi.shutdown()
                 break
             preButton = LCD.SELECT
-        elif lcd.is_pressed(LCD.UP):
+        elif myPi.lcd.is_pressed(LCD.UP):
             if preButton in (LCD.UP, LCD.DOWN):
                 myPi.up_volume()
             myPi.show_message(str(myPi.volume))
             preButton = LCD.UP
-        elif lcd.is_pressed(LCD.DOWN):
+        elif myPi.lcd.is_pressed(LCD.DOWN):
             if preButton in (LCD.UP, LCD.DOWN):
                 myPi.down_volume()
             myPi.show_message(str(myPi.volume))
             preButton = LCD.DOWN
-        elif lcd.is_pressed(LCD.LEFT):
+        elif myPi.lcd.is_pressed(LCD.LEFT):
             myPi.show_message('LEFT')
             preButton = LCD.LEFT
-        elif lcd.is_pressed(LCD.RIGHT):
+        elif myPi.lcd.is_pressed(LCD.RIGHT):
             myPi.show_message('RIGHT')
             preButton = LCD.RIGHT
 

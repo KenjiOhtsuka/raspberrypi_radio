@@ -67,7 +67,7 @@ class MyPi(object):
 
 if __name__ == "__main__":
     myPi = MyPi()
-    self.player_pid = subprocess.Popen(shlex.split('mplayer -playlist http://www.listenlive.eu/bbcradio4.m3u'))
+    myPi.play()
 
     sameCount = 0
     preButton = -1

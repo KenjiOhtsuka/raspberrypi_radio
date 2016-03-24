@@ -7,6 +7,7 @@ import time
 import Adafruit_CharLCD as LCD
 import socket
 import fcntl
+import subprocess
 
 class MyPi(object):
     def __init__(self):

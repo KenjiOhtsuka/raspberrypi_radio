@@ -2,26 +2,11 @@
 
 import commands
 import os
+import shlex
 import time
 import Adafruit_CharLCD as LCD
 
-class MyPi(object):
-    def __init__(self):
-        self.volume = int(commands.getoutput('amixer sget PCM | awk -F"[][%]" \'/dB/ { print $2 }\''))
-
-    def up_volume(self):
-        if self.volume < 100:
-            self.volume += 1
-            self.set_device_volume(self.volume)
-
-    def down_volume(self):
-        if self.volume > 0:
-            self.volume -= 1
-            self.set_device_volume(self.volume)
-
-    def set_device_volume(self, value):
-        os.system('amixer -q sset PCM ' + str(value) + '%')
-
+import MyPi
 
 
 myPi = MyPi()
@@ -29,11 +14,6 @@ myPi = MyPi()
 lcd = LCD.Adafruit_CharLCDPlate()
 
 # Make list of button value, text, and backlight color.
-buttons = ( (LCD.SELECT, 'Select'),
-            (LCD.LEFT,   'Left'  ),
-            (LCD.UP,     'Up'    ),
-            (LCD.DOWN,   'Down'  ),
-            (LCD.RIGHT,  'Right' ) )
 
 sameCount = 0
 preButton = -1

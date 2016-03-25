@@ -127,7 +127,7 @@ class MyPi(object):
         self.show_message("Not Connected")
 
     def show_playing(self):
-        self.show_message("Playing " + MyPi.radio_stations[self.radio_station_index]['name'])
+        self.show_message("Playing\n" + MyPi.radio_stations[self.radio_station_index]['name'])
 
     def press_select(self):
         if self.status == MyPi.STATUS_PLAYING:

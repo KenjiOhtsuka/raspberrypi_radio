@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import commands
 import datetime
@@ -23,23 +24,23 @@ class MyPi(object):
 
     menu_items = [
         {
-            "key"     : STATUS_TIME,
+            "key"     : MyPi.STATUS_TIME,
             "display" : "Time",
         },
         {
-            "key"     : STATUS_RADIO_SELECT,
+            "key"     : MyPi.STATUS_RADIO_SELECT,
             "display" : 'Select Radio Station',
         },
         {
-            "key"     : STATUS_IP,
+            "key"     : MyPi.STATUS_IP,
             "display" : 'Show IP Address',
         },
         {
-            "key"     : STATUS_REBOOT,
+            "key"     : MyPi.STATUS_REBOOT,
             "display" : 'Reboot',
         },
         {
-            "key"     : STATUS_SHUTDOWN,
+            "key"     : MyPi.STATUS_SHUTDOWN,
             "display" : 'Shutdown',
         },
     ]
@@ -67,7 +68,7 @@ class MyPi(object):
             int(commands.getoutput('amixer sget PCM | awk -F"[][%]" \'/dB/ { print $2 }\''))
         self.lcd    = \
             LCD.Adafruit_CharLCDPlate()
-        self.status = STATUS_PLAYING
+        self.status = MyPi.STATUS_PLAYING
         self.menu_index          = 0
         self.radio_station_index = 0
 
@@ -128,94 +129,94 @@ class MyPi(object):
         self.show_message("Not Connected")
 
     def press_select(self):
-        if self.status == STATUS_PLAYING:
+        if self.status == MyPi.STATUS_PLAYING:
             # show menu
-            self.status = STATUS_MENU
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
         else:
-            self.status = STATUS_PLAYING
+            self.status = MyPi.STATUS_PLAYING
 
     def press_up(self):
-        if self.status == STATUS_MENU:
+        if self.status == MyPi.STATUS_MENU:
             self.menu_index -= 1
             self.menu_index %= len(menu_items)
             if self.menu_index < 0:
                 self.menu_index += len(menu_items)
             self.show_message(menu_items[self.menu_index])
-        elif self.status == STATUS_RADIO_SELECT:
+        elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index -= 1
             self.radio_station_index %= len(radio_stations)
             if self.radio_station_index < 0:
                 self.radio_station_index += len(radio_stations)
             self.show_message(radio_stations[self.radio_station_index]['name'])
-        elif self.status == STATUS_VOLUME:
+        elif self.status == MyPi.STATUS_VOLUME:
             self.up_volume()
 
     def press_down(self):
-        if self.status == STATUS_MENU:
+        if self.status == MyPi.STATUS_MENU:
             self.menu_index += 1
             self.menu_index %= len(menu_items)
             self.show_message(menu_items[self.menu_index])
-        elif self.status == STATUS_RADIO_SELECT:
+        elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index += 1
             self.radio_station_index %= len(radio_stations)
             self.show_message(radio_stations[self.radio_station_index]['name'])
-        elif self.status == STATUS_VOLUME:
+        elif self.status == MyPi.STATUS_VOLUME:
             self.down_volume()
 
     def press_right(self):
-        if self.status == STATUS_MENU:
+        if self.status == MyPi.STATUS_MENU:
             menu_key = menu_items[self.menu_index]['key']
-            if menu_key == STATUS_VOLUME:
+            if menu_key == MyPi.STATUS_VOLUME:
                 self.status = menu_key
                 self.show_volume()
-            elif menu_key == STATUS_RADIO_SELECT:
+            elif menu_key == MyPi.STATUS_RADIO_SELECT:
                 self.status = menu_key
                 self.show_message(radio_stations[self.radio_station_index]['name'])
-            elif menu_key == STATUS_IP:
+            elif menu_key == MyPi.STATUS_IP:
                 self.show_ip()
-            elif menu_key == STATUS_TIME:
+            elif menu_key == MyPi.STATUS_TIME:
                 self.show_datetime()
-            elif menu_key == STATUS_SHUTDOWN:
+            elif menu_key == MyPi.STATUS_SHUTDOWN:
                 self.show_message("Do you want to\nShutdown?")
-            elif menu_key == STATUS_REBOOT:
+            elif menu_key == MyPi.STATUS_REBOOT:
                 self.show_message("Do you want to\nReboot?")
-        elif self.status == STATUS_RADIO_SELECT:
+        elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.play()
-            self.status = STATUS_PLAYING
-        elif self.status == STATUS_SHUTDOWN:
+            self.status = MyPi.STATUS_PLAYING
+        elif self.status == MyPi.STATUS_SHUTDOWN:
             self.show_message('Start Shutdown')
             self.shutdown()
-        elif self.status == STATUS_REBOOT:
+        elif self.status == MyPi.STATUS_REBOOT:
             self.show_message('Start Reboot')
             self.reboot()
             
     def press_left(self):
-        if self.status == STATUS_MENU:
+        if self.status == MyPi.STATUS_MENU:
             self.press_select()
             return
-        if self.status == STATUS_VOLUME:
-            self.status = STATUS_MENU
+        if self.status == MyPi.STATUS_VOLUME:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
-        if menu_key == STATUS_RADIO_SELECT:
-            self.status = STATUS_MENU
+        if menu_key == MyPi.STATUS_RADIO_SELECT:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
-        if menu_key == STATUS_TIME:
-            self.status = STATUS_MENU
+        if menu_key == MyPi.STATUS_TIME:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
-        if menu_key == STATUS_IP:
-            self.status = STATUS_MENU
+        if menu_key == MyPi.STATUS_IP:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
-        if menu_key == STATUS_SHUTDOWN:
-            self.status = STATUS_MENU
+        if menu_key == MyPi.STATUS_SHUTDOWN:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
-        if menu_key == STATUS_REBOOT:
-            self.status = STATUS_MENU
+        if menu_key == MyPi.STATUS_REBOOT:
+            self.status = MyPi.STATUS_MENU
             self.show_message(menu_items[self.menu_index])
             return
             

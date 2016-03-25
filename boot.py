@@ -17,6 +17,8 @@ class MyPi(object):
     STATUS_TIME         = 3
     STATUS_RADIO_SELECT = 4
     STATUS_IP           = 5
+    STATUS_REBOOT       = 6
+    STATUS_SHUTDOWN     = 7
 
     menu_items = [
         {
@@ -31,6 +33,14 @@ class MyPi(object):
             "key"     : STATUS_IP,
             "display" : 'Show IP Address',
         },
+        {
+            "key"     : STATUS_REBOOT,
+            "display" : 'Reboot',
+        },
+        {
+            "key"     : STATUS_SHUTDOWN,
+            "display" : 'Shutdown',
+        },
     ]
     radio_stations = [
         {
@@ -44,7 +54,7 @@ class MyPi(object):
         {
             "name" : "J-WAVE",
             "url"  : ""
-        }
+        },
     ]
   
     def __init__(self):

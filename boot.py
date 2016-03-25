@@ -66,6 +66,9 @@ class MyPi(object):
         self.status = STATUS_PLAYING
         self.menu_index          = 0
         self.radio_station_index = 0
+
+    def is_connected(self):
+
     
     def shutdown(self):
         os.system('sudo shutdown -h now')
@@ -97,9 +100,13 @@ class MyPi(object):
         self.show_message(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
 
     def show_ip(self):
+        eth0_ip = self.ifconfig('eth0')
+        if eth0_ip == None: eth0_ip = 'None'
+        wlan0_ip = self.ifconfig('wlan0')
+        if wlan0_ip == None: wlan0_ip = 'None'
         self.show_message(
-            'eth0  ' + self.ifconfig('eth0') + "\n" +
-            "wlan0 " + self.ifconfig('wlan0'))
+            'eth0  ' + eth0_ip + "\n" +
+            "wlan0 " + wlan0_ip)
 
     def play(self, radio_station_index = 0):
         self.player_pid = \
@@ -172,24 +179,31 @@ class MyPi(object):
     def press_left(self):
         if self.status == STATUS_MENU:
             self.press_select()
-        if menu_key == STATUS_VOLUME:
+            return
+        if self.status == STATUS_VOLUME:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
-        elif menu_key == STATUS_RADIO_SELECT:
+            return
+        if menu_key == STATUS_RADIO_SELECT:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
-        elif menu_key == STATUS_TIME:
+            return
+        if menu_key == STATUS_TIME:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
-        elif menu_key == STATUS_IP:
+            return
+        if menu_key == STATUS_IP:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
-        elif menu_key == STATUS_SHUTDOWN:
+            return
+        if menu_key == STATUS_SHUTDOWN:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
-        elif menu_key == STATUS_REBOOT:
+            return
+        if menu_key == STATUS_REBOOT:
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
+            return
             
     ############################################################################
     # dont call below methods from outside

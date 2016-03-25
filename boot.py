@@ -49,12 +49,16 @@ class MyPi(object):
             "url"  : "http://www.listenlive.eu/bbcradio4.m3u",
         },
         {
-            "name" : "Classic",
-            "url"  : "",
+            "name" : "Symphony",
+            "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=178543",
+        },
+        {
+            "name" : "Chumber",
+            "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=631044",
         },
         {
             "name" : "J-WAVE",
-            "url"  : ""
+            "url"  : "http://www.j-wave.co.jp/radiobar/source/j-wave2.asx",
         },
     ]
   
@@ -68,7 +72,11 @@ class MyPi(object):
         self.radio_station_index = 0
 
     def is_connected(self):
-
+        response = os.system('ping -c 1 google.com')
+        if response == 0:
+            return True
+        else:
+            return False
     
     def shutdown(self):
         os.system('sudo shutdown -h now')
@@ -109,10 +117,13 @@ class MyPi(object):
             "wlan0 " + wlan0_ip)
 
     def play(self, radio_station_index = 0):
-        self.player_pid = \
-            subprocess.Popen(
-                shlex.split(
-                    'mplayer -quiet -playlist ' + radio_stations[self.radio_station_index]))
+        if self.is_connected():
+            self.player_pid = \
+                subprocess.Popen(
+                    shlex.split(
+                        'mplayer -quiet -playlist ' + radio_stations[radio_station_index]))
+            return
+        self.show_message("Not Connected")
 
     def press_select(self):
         if self.status == STATUS_PLAYING:
@@ -169,6 +180,7 @@ class MyPi(object):
                 self.show_message("Do you want to\nReboot?")
         elif self.status == STATUS_RADIO_SELECT:
             self.play()
+            self.status = STATUS_PLAYING
         elif self.status == STATUS_SHUTDOWN:
             self.show_message('Start Shutdown')
             self.shutdown()

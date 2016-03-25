@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import commands
+import datetime
 import fcntl
 import json
 import os
@@ -63,7 +64,8 @@ class MyPi(object):
         self.lcd    = \
             LCD.Adafruit_CharLCDPlate()
         self.status = STATUS_PLAYING
-        self.menu_index = 0
+        self.menu_index          = 0
+        self.radio_station_index = 0
     
     def shutdown(self):
         os.system('sudo shutdown -h now')
@@ -80,32 +82,40 @@ class MyPi(object):
         if self.volume < 100:
             self.volume += 1
             self.set_device_volume(self.volume)
-        self.show_message("Volume¥n" + str(self.volume))
+        self.show_volume()
 
     def down_volume(self):
         if self.volume > 0:
             self.volume -= 1
             self.set_device_volume(self.volume)
+        self.show_volume()
+
+    def show_volume(self):
         self.show_message("Volume¥n" + str(self.volume))
 
-    def play(self):
-        self.player_pid = subprocess.Popen(shlex.split('mplayer -quiet -playlist http://www.listenlive.eu/bbcradio4.m3u'))
+    def show_datetime(self):
+        self.show_message(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+
+    def show_ip(self):
+        self.show_message(
+            'eth0  ' + self.ifconfig('eth0') + "\n" +
+            "wlan0 " + self.ifconfig('wlan0'))
+
+    def play(self, radio_station_index = 0):
+        self.player_pid = \
+            subprocess.Popen(
+                shlex.split(
+                    'mplayer -quiet -playlist ' + radio_stations[self.radio_station_index]))
 
     def press_select(self):
         if self.status == STATUS_PLAYING:
             # show menu
             self.status = STATUS_MENU
             self.show_message(menu_items[self.menu_index])
+        else:
+            self.status = STATUS_PLAYING
 
     def press_up(self):
-        if self.status == STATUS_MENU:
-            self.menu_index += 1
-            self.menu_index %= len(menu_items)
-            self.show_message(menu_items[self.menu_index])
-        elif self.status == STATUS_RADIO_SELECT:
-        elif self.status == STATUS_VOLUME:
-
-    def press_down(self):
         if self.status == STATUS_MENU:
             self.menu_index -= 1
             self.menu_index %= len(menu_items)
@@ -113,17 +123,73 @@ class MyPi(object):
                 self.menu_index += len(menu_items)
             self.show_message(menu_items[self.menu_index])
         elif self.status == STATUS_RADIO_SELECT:
+            self.radio_station_index -= 1
+            self.radio_station_index %= len(radio_stations)
+            if self.radio_station_index < 0:
+                self.radio_station_index += len(radio_stations)
+            self.show_message(radio_stations[self.radio_station_index]['name'])
         elif self.status == STATUS_VOLUME:
+            self.up_volume()
+
+    def press_down(self):
+        if self.status == STATUS_MENU:
+            self.menu_index += 1
+            self.menu_index %= len(menu_items)
+            self.show_message(menu_items[self.menu_index])
+        elif self.status == STATUS_RADIO_SELECT:
+            self.radio_station_index += 1
+            self.radio_station_index %= len(radio_stations)
+            self.show_message(radio_stations[self.radio_station_index]['name'])
+        elif self.status == STATUS_VOLUME:
+            self.down_volume()
 
     def press_right(self):
         if self.status == STATUS_MENU:
             menu_key = menu_items[self.menu_index]['key']
             if menu_key == STATUS_VOLUME:
+                self.status = menu_key
+                self.show_volume()
             elif menu_key == STATUS_RADIO_SELECT:
+                self.status = menu_key
+                self.show_message(radio_stations[self.radio_station_index]['name'])
+            elif menu_key == STATUS_IP:
+                self.show_ip()
             elif menu_key == STATUS_TIME:
-
+                self.show_datetime()
+            elif menu_key == STATUS_SHUTDOWN:
+                self.show_message("Do you want to\nShutdown?")
+            elif menu_key == STATUS_REBOOT:
+                self.show_message("Do you want to\nReboot?")
+        elif self.status == STATUS_RADIO_SELECT:
+            self.play()
+        elif self.status == STATUS_SHUTDOWN:
+            self.show_message('Start Shutdown')
+            self.shutdown()
+        elif self.status == STATUS_REBOOT:
+            self.show_message('Start Reboot')
+            self.reboot()
+            
     def press_left(self):
         if self.status == STATUS_MENU:
+            self.press_select()
+        if menu_key == STATUS_VOLUME:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
+        elif menu_key == STATUS_RADIO_SELECT:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
+        elif menu_key == STATUS_TIME:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
+        elif menu_key == STATUS_IP:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
+        elif menu_key == STATUS_SHUTDOWN:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
+        elif menu_key == STATUS_REBOOT:
+            self.status = STATUS_MENU
+            self.show_message(menu_items[self.menu_index])
             
     ############################################################################
     # dont call below methods from outside
@@ -153,39 +219,23 @@ class MyPi(object):
 
         return socket.inet_ntoa(result[20:24])
 
+    def detect_button(self):
+        if self.lcd.is_pressed(LCD.SELECT):
+            self.press_select()
+        elif self.lcd.is_pressed(LCD.UP):
+            self.press_up()
+        elif self.lcd.is_pressed(LCD.DOWN):
+            self.press_down()
+        elif self.lcd.is_pressed(LCD.LEFT):
+            self.press_down()
+        elif self.lcd.is_pressed(LCD.RIGHT):
+            self.press_right()
+
 if __name__ == "__main__":
     myPi = MyPi()
     myPi.play()
 
-    sameCount = 0
     preButton = -1
     while True:
         time.sleep(0.02)
-        if myPi.lcd.is_pressed(LCD.SELECT):
-            if preButton == LCD.SELECT:
-                sameCount += 1
-            else:
-                sameCount = 0
-            myPi.show_message('SELECT ' + str(sameCount))
-            if sameCount > 40:
-                myPi.show_message('shutdown')
-                myPi.shutdown()
-                break
-            preButton = LCD.SELECT
-        elif myPi.lcd.is_pressed(LCD.UP):
-            if preButton in (LCD.UP, LCD.DOWN):
-                myPi.up_volume()
-            myPi.show_message(str(myPi.volume))
-            preButton = LCD.UP
-        elif myPi.lcd.is_pressed(LCD.DOWN):
-            if preButton in (LCD.UP, LCD.DOWN):
-                myPi.down_volume()
-            myPi.show_message(str(myPi.volume))
-            preButton = LCD.DOWN
-        elif myPi.lcd.is_pressed(LCD.LEFT):
-            myPi.show_message('LEFT')
-            preButton = LCD.LEFT
-        elif myPi.lcd.is_pressed(LCD.RIGHT):
-            myPi.show_message('RIGHT')
-            preButton = LCD.RIGHT
-
+        myPi.detect_button()

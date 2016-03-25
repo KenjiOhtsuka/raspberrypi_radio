@@ -176,12 +176,17 @@ class MyPi(object):
                 self.status = menu_key
                 self.show_message(MyPi.radio_stations[self.radio_station_index]['name'])
             elif menu_key == MyPi.STATUS_IP:
+                self.status = menu_key
                 self.show_ip()
             elif menu_key == MyPi.STATUS_TIME:
+                self.status = menu_key
                 self.show_datetime()
+                return
             elif menu_key == MyPi.STATUS_SHUTDOWN:
+                self.status = menu_key
                 self.show_message("Do you want to\nShutdown?")
             elif menu_key == MyPi.STATUS_REBOOT:
+                self.status = menu_key
                 self.show_message("Do you want to\nReboot?")
         elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.play()
@@ -201,23 +206,23 @@ class MyPi(object):
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
-        if menu_key == MyPi.STATUS_RADIO_SELECT:
+        if self.status == MyPi.STATUS_RADIO_SELECT:
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
-        if menu_key == MyPi.STATUS_TIME:
+        if self.status == MyPi.STATUS_TIME:
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
-        if menu_key == MyPi.STATUS_IP:
+        if self.status == MyPi.STATUS_IP:
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
-        if menu_key == MyPi.STATUS_SHUTDOWN:
+        if self.status == MyPi.STATUS_SHUTDOWN:
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
-        if menu_key == MyPi.STATUS_REBOOT:
+        if self.status == MyPi.STATUS_REBOOT:
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
@@ -258,7 +263,7 @@ class MyPi(object):
         elif self.lcd.is_pressed(LCD.DOWN):
             self.press_down()
         elif self.lcd.is_pressed(LCD.LEFT):
-            self.press_down()
+            self.press_left()
         elif self.lcd.is_pressed(LCD.RIGHT):
             self.press_right()
 
@@ -267,5 +272,5 @@ if __name__ == "__main__":
     myPi.play()
 
     while True:
-        time.sleep(0.03)
+        time.sleep(0.1)
         myPi.detect_button()

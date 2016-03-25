@@ -14,4 +14,5 @@ Press SELECT button for a while.
 
 ## Prerequisite
 
-Assembly Adafruit LCD 16x2 Panel
+* Assembly Adafruit LCD 16x2 Panel
+* Network Connection

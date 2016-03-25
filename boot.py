@@ -17,10 +17,11 @@ class MyPi(object):
     STATUS_PLAYING      = 1
     STATUS_MENU         = 2
     STATUS_TIME         = 3
-    STATUS_RADIO_SELECT = 4
-    STATUS_IP           = 5
-    STATUS_REBOOT       = 6
-    STATUS_SHUTDOWN     = 7
+    STATUS_VOLUME       = 4
+    STATUS_RADIO_SELECT = 5
+    STATUS_IP           = 6
+    STATUS_REBOOT       = 7
+    STATUS_SHUTDOWN     = 8
 
     menu_items = [
         {
@@ -133,7 +134,7 @@ class MyPi(object):
         if self.status == MyPi.STATUS_PLAYING:
             # show menu
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
         else:
             self.status = MyPi.STATUS_PLAYING
 
@@ -143,7 +144,7 @@ class MyPi(object):
             self.menu_index %= len(MyPi.menu_items)
             if self.menu_index < 0:
                 self.menu_index += len(MyPi.menu_items)
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
         elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index -= 1
             self.radio_station_index %= len(MyPi.radio_stations)
@@ -157,7 +158,7 @@ class MyPi(object):
         if self.status == MyPi.STATUS_MENU:
             self.menu_index += 1
             self.menu_index %= len(MyPi.menu_items)
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
         elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index += 1
             self.radio_station_index %= len(MyPi.radio_stations)
@@ -198,27 +199,27 @@ class MyPi(object):
             return
         if self.status == MyPi.STATUS_VOLUME:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
         if menu_key == MyPi.STATUS_RADIO_SELECT:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
         if menu_key == MyPi.STATUS_TIME:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
         if menu_key == MyPi.STATUS_IP:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
         if menu_key == MyPi.STATUS_SHUTDOWN:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
         if menu_key == MyPi.STATUS_REBOOT:
             self.status = MyPi.STATUS_MENU
-            self.show_message(MyPi.menu_items[self.menu_index])
+            self.show_message(MyPi.menu_items[self.menu_index]['display'])
             return
             
     ############################################################################

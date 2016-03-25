@@ -118,6 +118,8 @@ class MyPi(object):
 
     def play(self, radio_station_index = 0):
         if self.is_connected():
+            if self.player_pid.returncode == None:
+                self.player_pid.wait()
             self.player_pid = \
                 subprocess.Popen(
                     shlex.split(
@@ -261,7 +263,6 @@ if __name__ == "__main__":
     myPi = MyPi()
     myPi.play()
 
-    preButton = -1
     while True:
-        time.sleep(0.02)
+        time.sleep(0.03)
         myPi.detect_button()

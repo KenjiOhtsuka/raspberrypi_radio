@@ -111,13 +111,9 @@ class MyPi(object):
         self.show_message(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
 
     def show_ip(self):
-        eth0_ip = self.ifconfig('eth0')
-        if eth0_ip == None: eth0_ip = 'None'
-        wlan0_ip = self.ifconfig('wlan0')
-        if wlan0_ip == None: wlan0_ip = 'None'
         self.show_message(
-            'eth0  ' + eth0_ip + "\n" +
-            "wlan0 " + wlan0_ip)
+            'eth0  ' + self.get_eth_ip() + "\n" +
+            "wlan0 " + self.get_wlan_ip())
 
     def play(self, radio_station_index = 0):
         if self.is_connected():
@@ -130,13 +126,16 @@ class MyPi(object):
             return
         self.show_message("Not Connected")
 
+    def show_playing(self):
+        self.show_message("Playing " + MyPi.radio_stations[self.radio_station_index]['name'])
+
     def press_select(self):
         if self.status == MyPi.STATUS_PLAYING:
-            # show menu
             self.status = MyPi.STATUS_MENU
             self.show_message(MyPi.menu_items[self.menu_index]['display'])
         else:
             self.status = MyPi.STATUS_PLAYING
+            self.show_playing()
 
     def press_up(self):
         if self.status == MyPi.STATUS_MENU:
@@ -189,7 +188,8 @@ class MyPi(object):
                 self.status = menu_key
                 self.show_message("Do you want to\nReboot?")
         elif self.status == MyPi.STATUS_RADIO_SELECT:
-            self.play()
+            self.play(self.radio_station_index)
+            self.show_playing()
             self.status = MyPi.STATUS_PLAYING
         elif self.status == MyPi.STATUS_SHUTDOWN:
             self.show_message('Start Shutdown')
@@ -236,15 +236,17 @@ class MyPi(object):
     def get_wlan_ip(self):
         return MyPi.get_ip('wlan0')
 
-    def get_wlan_ip(self):
+    def get_eth_ip(self):
         return MyPi.get_ip('eth0')
 
+    @staticmethod
     def get_ip(ifname):
         ip = MyPi.ifconfig(ifname)
         if ip == None:
             return 'No IP Address'
         return ip
 
+    @staticmethod
     def ifconfig(ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:

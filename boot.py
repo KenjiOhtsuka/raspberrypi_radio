@@ -29,6 +29,10 @@ class MyPi(object):
             "display" : "Time",
         },
         {
+            "key"     : STATUS_VOLUME,
+            "display" : 'Control Volume',
+        },
+        {
             "key"     : STATUS_RADIO_SELECT,
             "display" : 'Select Radio Station',
         },
@@ -105,7 +109,7 @@ class MyPi(object):
         self.show_volume()
 
     def show_volume(self):
-        self.show_message("Volume¥n" + str(self.volume))
+        self.show_message("Volume\n" + str(self.volume))
 
     def show_datetime(self):
         self.show_message(datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
@@ -118,11 +122,13 @@ class MyPi(object):
     def play(self, radio_station_index = 0):
         if self.is_connected():
             if self.player_pid != None and self.player_pid.returncode == None:
+                self.player_pid.stdin.write('q')
                 self.player_pid.wait()
             self.player_pid = \
                 subprocess.Popen(
                     shlex.split(
-                        'mplayer -quiet -playlist ' + MyPi.radio_stations[radio_station_index]['url']))
+                        'mplayer -quiet -playlist ' + MyPi.radio_stations[radio_station_index]['url']),
+                    stdin=subprocess.PIPE)
             return
         self.show_message("Not Connected")
 
@@ -197,6 +203,8 @@ class MyPi(object):
         elif self.status == MyPi.STATUS_REBOOT:
             self.show_message('Start Reboot')
             self.reboot()
+        elif self.status == MyPi.STATUS_IP:
+            self.lcd.move_right()
             
     def press_left(self):
         if self.status == MyPi.STATUS_MENU:
@@ -272,6 +280,7 @@ class MyPi(object):
 if __name__ == "__main__":
     myPi = MyPi()
     myPi.play()
+    myPi.show_playing()
 
     while True:
         time.sleep(0.1)

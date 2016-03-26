@@ -63,6 +63,10 @@ class MyPi(object):
             "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=631044",
         },
         {
+            "name" : "Juzz Big Band - J-Last",
+            "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99180486"
+        },
+        {
             "name" : "J-WAVE",
             "url"  : "http://www.j-wave.co.jp/radiobar/source/j-wave2.asx",
         },

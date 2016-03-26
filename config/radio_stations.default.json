@@ -16,6 +16,14 @@
     "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99180486"
   },
   {
+    "name" : "Juzz",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=645277"
+  },
+  {
+    "name" : "Comedy",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=387224"
+  },
+  {
     "name" : "J-WAVE",
     "url"  : "http://www.j-wave.co.jp/radiobar/source/j-wave2.asx"
   }

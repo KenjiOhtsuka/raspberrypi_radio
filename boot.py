@@ -80,7 +80,26 @@ class MyPi(object):
         self.status = MyPi.STATUS_PLAYING
         self.menu_index          = 0
         self.radio_station_index = 0
+        self.load_radio_stations()
 	self.player_pid          = None
+
+    def load_radio_stations(self):
+        if os.path.isfile("config/radio_stations.json"):
+            try:
+                with open("config/radio_stations.json") as f:
+                    self.radio_stations = json.load(f)
+                return
+            except:
+                print 'error'
+        if os.path.isfile("config/radio_stations.default.json"):
+            try:
+                with open("config/radio_stations.default.json") as f:
+                    self.radio_stations = json.load(f)
+                return
+            except:
+                print 'error'
+        self.radio_stations = MyPi.radio_stations
+
 
     def is_connected(self):
         response = os.system('sudo ping -c 1 google.com')
@@ -131,7 +150,7 @@ class MyPi(object):
             self.player_pid = \
                 subprocess.Popen(
                     shlex.split(
-                        'mplayer -quiet -playlist ' + MyPi.radio_stations[radio_station_index]['url']),
+                        'mplayer -quiet -playlist ' + self.radio_stations[radio_station_index]['url']),
                     stdin=subprocess.PIPE)
             return
         self.show_message("Not Connected")
@@ -142,7 +161,7 @@ class MyPi(object):
             self.player_pid.wait()
 
     def show_playing(self):
-        self.show_message("Playing\n" + MyPi.radio_stations[self.radio_station_index]['name'])
+        self.show_message("Playing\n" + self.radio_stations[self.radio_station_index]['name'])
 
     def show_menu_item(self, menu_index):
         self.show_message(str(self.menu_index + 1) + ' ' + MyPi.menu_items[self.menu_index]['display'])
@@ -167,10 +186,10 @@ class MyPi(object):
             time.sleep(0.3)
         elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index -= 1
-            self.radio_station_index %= len(MyPi.radio_stations)
+            self.radio_station_index %= len(self.radio_stations)
             if self.radio_station_index < 0:
-                self.radio_station_index += len(MyPi.radio_stations)
-            self.show_message(MyPi.radio_stations[self.radio_station_index]['name'])
+                self.radio_station_index += len(self.radio_stations)
+            self.show_message(self.radio_stations[self.radio_station_index]['name'])
             time.sleep(0.3)
         elif self.status == MyPi.STATUS_VOLUME:
             self.up_volume()
@@ -183,8 +202,8 @@ class MyPi(object):
             time.sleep(0.3)
         elif self.status == MyPi.STATUS_RADIO_SELECT:
             self.radio_station_index += 1
-            self.radio_station_index %= len(MyPi.radio_stations)
-            self.show_message(MyPi.radio_stations[self.radio_station_index]['name'])
+            self.radio_station_index %= len(self.radio_stations)
+            self.show_message(self.radio_stations[self.radio_station_index]['name'])
             time.sleep(0.3)
         elif self.status == MyPi.STATUS_VOLUME:
             self.down_volume()
@@ -197,7 +216,7 @@ class MyPi(object):
                 self.show_volume()
             elif menu_key == MyPi.STATUS_RADIO_SELECT:
                 self.status = menu_key
-                self.show_message(MyPi.radio_stations[self.radio_station_index]['name'])
+                self.show_message(self.radio_stations[self.radio_station_index]['name'])
             elif menu_key == MyPi.STATUS_IP:
                 self.status = menu_key
                 self.show_ip()

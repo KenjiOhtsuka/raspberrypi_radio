@@ -1,0 +1,31 @@
+[
+  {
+    "name" : "BBC4",
+    "url"  : "http://www.listenlive.eu/bbcradio4.m3u"
+  },
+  {
+    "name" : "Symphony",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=178543"
+  },
+  {
+    "name" : "Chumber",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=631044"
+  },
+  {
+    "name" : "Juzz Big Band - J-Last",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=99180486"
+  },
+  {
+    "name" : "Juzz",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=645277"
+  },
+  {
+    "name" : "Comedy",
+    "url"  : "http://yp.shoutcast.com/sbin/tunein-station.pls?id=387224"
+  },
+  {
+    "name" : "J-WAVE",
+    "url"  : "http://www.j-wave.co.jp/radiobar/source/j-wave2.asx"
+  }
+]
+

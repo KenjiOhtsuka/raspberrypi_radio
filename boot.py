@@ -81,7 +81,7 @@ class MyPi(object):
         self.menu_index          = 0
         self.radio_station_index = 0
         self.load_radio_stations()
-	self.player_pid          = None
+        self.player_pid          = None
 
     def load_radio_stations(self):
         if os.path.isfile("config/radio_stations.json"):

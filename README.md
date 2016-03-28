@@ -16,3 +16,7 @@ Press SELECT button for a while.
 
 * Assembly Adafruit LCD 16x2 Panel
 * Network Connection
+
+## Python file format
+
+* indentation : 4 spaces

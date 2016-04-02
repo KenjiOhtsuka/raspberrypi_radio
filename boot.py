@@ -325,6 +325,7 @@ class MyPi(object):
 
 if __name__ == "__main__":
     myPi = MyPi()
+    myPi.show_message("Booting")
     myPi.play()
     myPi.show_playing()
 

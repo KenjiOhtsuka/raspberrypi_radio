@@ -110,10 +110,12 @@ class MyPi(object):
     
     def shutdown(self):
         self.stop()
+        self.show_message('Start Shutdown')
         os.system('sudo shutdown -h now')
 
     def reboot(self):
         self.stop()
+        self.show_message('Start Reboot')
         os.system('sudo shutdown -r now')
 
     def show_message(self, text, clear=True):
@@ -157,8 +159,10 @@ class MyPi(object):
 
     def stop(self):
         if self.player_pid != None and self.player_pid.returncode == None:
+            self.show_message('Stopping')
             self.player_pid.stdin.write('q')
             self.player_pid.wait()
+            self.show_message('Stopped')
 
     def show_playing(self):
         self.show_message("Playing\n" + self.radio_stations[self.radio_station_index]['name'])
@@ -235,10 +239,8 @@ class MyPi(object):
             self.show_playing()
             self.status = MyPi.STATUS_PLAYING
         elif self.status == MyPi.STATUS_SHUTDOWN:
-            self.show_message('Start Shutdown')
             self.shutdown()
         elif self.status == MyPi.STATUS_REBOOT:
-            self.show_message('Start Reboot')
             self.reboot()
         elif self.status == MyPi.STATUS_IP:
             self.lcd.move_left()
@@ -323,6 +325,7 @@ class MyPi(object):
 
 if __name__ == "__main__":
     myPi = MyPi()
+    myPi.show_message("Booting")
     myPi.play()
     myPi.show_playing()
 
